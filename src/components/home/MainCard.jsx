@@ -19,7 +19,7 @@ import {
 
 const MainCard = () => {
   return (
-    <Card className="w-2/3 h-2/3 max-w-[700px]">
+    <Card className="w-2/3 h-2/3 max-w-[700px] dark:dark-shadow">
       <CardHeader>
         <CardTitle>Chat with SCG</CardTitle>
         <CardDescription className="mb-4">
