@@ -17,6 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import ThreeScene from "@/components/ThreeScene";
+
 const MainCard = () => {
   return (
     <Card className="w-2/3 h-2/3 max-w-[700px] dark:dark-shadow">
@@ -27,7 +29,9 @@ const MainCard = () => {
         </CardDescription>
       </CardHeader>
       <div className="w-full h-full flex justify-center items-center">
-        <Card className="w-2/3 aspect-square"></Card>
+        <Card className="w-2/3 aspect-square ">
+          <ThreeScene />
+        </Card>
       </div>
       <CardContent className="mt-4">
         <form>
