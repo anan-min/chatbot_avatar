@@ -11,6 +11,12 @@ const AudioRecorder = () => {
 
   const startRecording = async () => {
     try {
+      if (audioRef.current && !audioRef.current.paused) {
+        audioRef.current.pause(); 
+        audioRef.current.currentTime = 0; 
+        setAudioURL(null); 
+      }
+  
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
