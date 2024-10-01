@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import MainCard from "@/components/home/MainCard";
+import AudioRecorder from "@/components/home/AudioRecorder";
 
 export default function Home() {
   return (
@@ -7,7 +7,7 @@ export default function Home() {
       <Navbar />
       <main className="pt-14">
         <div className="p-6 flex justify-center">
-          <MainCard />
+          <AudioRecorder />
         </div>
       </main>
     </div>
