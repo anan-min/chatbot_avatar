@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import ThreeScene from "@/components/ThreeScene";
+import AudioVisualize from "@/components/AudioVisualize";
 
 const MainCard = () => {
   return (
@@ -30,7 +30,7 @@ const MainCard = () => {
       </CardHeader>
       <div className="w-full h-full flex justify-center items-center">
         <Card className="w-2/3 aspect-square ">
-          <ThreeScene />
+          <AudioVisualize />
         </Card>
       </div>
       <CardContent className="mt-4">
