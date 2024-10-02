@@ -14,7 +14,6 @@ const RecordButton = ({
   const audioChunksRef = useRef([]);
   const audioRef = useRef(null);
 
-
   const startRecording = async () => {
     try {
       if (audioRef.current && !audioRef.current.paused) {
@@ -89,7 +88,7 @@ const RecordButton = ({
               : "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
           }`}
       >
-        {isRecording ? "Stop Recording" : "Start Recording"}
+        {isRecording ? "End" : "Start"}
       </button>
 
       {audioURL && (

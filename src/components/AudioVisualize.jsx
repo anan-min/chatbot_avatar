@@ -11,12 +11,18 @@ import {
 const AudioVisualize = ({ processedAudioURL }) => {
   const mountRef = useRef(null);
   const noise = new Noise(Math.random());
+  const audioRef = useRef(null);
+  const animationIdRef = useRef(null);
 
   useEffect(() => {
     const { scene, camera, renderer, ball } = configThreeJS(mountRef);
-
     const onResize = () => handleResize(camera, renderer, mountRef);
     window.addEventListener("resize", onResize);
+
+    const startStaticAnimation = () => {
+      animateStatic(ball, scene, camera, renderer);
+    };
+
 
     staticAnimate(ball, scene, camera, renderer, noise);
 
