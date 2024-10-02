@@ -77,6 +77,31 @@ const handleResize = (camera, renderer, mountRef) => {
   camera.updateProjectionMatrix();
 };
 
+const WarpBall = (mesh, bassFr, treFr) => {
+  mesh.geometry.vertices.forEach(function (vertex, i) {
+    var offset = mesh.geometry.parameters.radius;
+    var amp = 5;
+    var time = window.performance.now();
+    vertex.normalize();
+    var rf = 0.00001;
+    var distance =
+      offset +
+      bassFr +
+      noise.noise3D(
+        vertex.x + time * rf * 6,
+        vertex.y + time * rf * 7,
+        vertex.z + time * rf * 8
+      ) *
+        amp *
+        treFr;
+    vertex.multiplyScalar(distance);
+  });
+  mesh.geometry.verticesNeedUpdate = true;
+  mesh.geometry.normalsNeedUpdate = true;
+  mesh.geometry.computeVertexNormals();
+  mesh.geometry.computeFaceNormals();
+};
+
 const ThreeScene = () => {
   const mountRef = useRef(null);
 
