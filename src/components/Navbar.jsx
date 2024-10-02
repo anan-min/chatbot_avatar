@@ -11,7 +11,8 @@ const Navbar = () => {
           className="mr-auto flex items-center gap-2 text-lg font-semibold"
           prefetch={false}
         >
-          <span>SCG CHAT</span>
+          <span className="text-teal-600">SCG</span>
+          <span> CHAT</span>
         </Link>
 
         <ModeToggle className="ml-auto flex items-center gap-2 text-md" />

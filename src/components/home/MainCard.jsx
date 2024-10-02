@@ -30,7 +30,10 @@ const MainCard = () => {
   return (
     <Card className="w-2/3 h-2/3 max-w-[700px] dark:dark-shadow">
       <CardHeader>
-        <CardTitle>Chat with SCG</CardTitle>
+        <CardTitle>
+          Chat with
+          <span className="text-teal-600"> SCG</span>
+        </CardTitle>
         <CardDescription className="mb-4">
           Choose providers and hit record.
         </CardDescription>
