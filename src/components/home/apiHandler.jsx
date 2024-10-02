@@ -1,9 +1,14 @@
-export const sendAudioToApi = async (audioBlob) => {
+export const sendAudioToApi = async (
+  audioBlob,
+  sttProvider,
+  ttsProvider,
+  queryProvider
+) => {
   const formData = new FormData();
   formData.append("audio_file", audioBlob);
-  formData.append("stt_provider", "random 123"); // Speech-to-Text Provider
-  formData.append("tts_provider", "asdfasd "); // Text-to-Speech Provider
-  formData.append("query_provider", "asdfasdf "); // Query Provider
+  formData.append("stt_provider", sttProvider);
+  formData.append("tts_provider", ttsProvider);
+  formData.append("query_provider", queryProvider); // Query Provider
 
   try {
     console.log("response sended", formData);

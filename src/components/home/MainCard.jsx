@@ -1,5 +1,7 @@
+"use client";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import RecordButton from "@/components/home/RecordButton";
 import {
   Card,
   CardContent,
@@ -20,6 +22,11 @@ import {
 import AudioVisualize from "@/components/AudioVisualize";
 
 const MainCard = () => {
+  const [sttProvider, setSttProvider] = useState("openai_stt");
+  const [ttsProvider, setTtsProvider] = useState("openai_tts");
+  const [queryProvider, setQueryProvider] = useState("chatgpt");
+  const [processedAudioURL, setProcessedAudioURL] = useState(null);
+
   return (
     <Card className="w-2/3 h-2/3 max-w-[700px] dark:dark-shadow">
       <CardHeader>
@@ -30,7 +37,7 @@ const MainCard = () => {
       </CardHeader>
       <div className="w-full h-full flex justify-center items-center">
         <Card className="w-2/3 aspect-square ">
-          <AudioVisualize />
+          <AudioVisualize processedAudioURL={processedAudioURL} />
         </Card>
       </div>
       <CardContent className="mt-4">
@@ -38,7 +45,10 @@ const MainCard = () => {
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="stt-provider">STT Provider</Label>
-              <Select>
+              <Select
+                value={sttProvider}
+                onValueChange={(value) => setSttProvider(value)}
+              >
                 <SelectTrigger id="stt-provider">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -53,7 +63,10 @@ const MainCard = () => {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="tts-provider">TTS Provider</Label>
-              <Select>
+              <Select
+                value={ttsProvider}
+                onValueChange={(value) => setTtsProvider(value)}
+              >
                 <SelectTrigger id="tts-provider">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -69,7 +82,10 @@ const MainCard = () => {
 
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="query-provider">Query Provider</Label>
-              <Select>
+              <Select
+                value={queryProvider}
+                onValueChange={(value) => setQueryProvider(value)}
+              >
                 <SelectTrigger id="query-provider">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -84,7 +100,13 @@ const MainCard = () => {
         </form>
       </CardContent>
       <CardFooter className="flex justify-center">
-        <Button>Deploy</Button>
+        <RecordButton
+          sttProvider={sttProvider}
+          ttsProvider={ttsProvider}
+          queryProvider={queryProvider}
+          processedAudioURL={processedAudioURL}
+          setProcessedAudioURL={setProcessedAudioURL}
+        />
       </CardFooter>
     </Card>
   );

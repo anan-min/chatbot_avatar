@@ -2,7 +2,12 @@
 import { useState, useRef } from "react";
 import { sendAudioToApi } from "./apiHandler"; // Assuming your API function is in apiHandler.js
 
-const AudioRecorder = () => {
+const RecordButton = ({
+  sttProvider,
+  ttsProvider,
+  queryProvider,
+  setProcessedAudioURL,
+}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null); // State to store the audio URL
   const mediaRecorderRef = useRef(null);
@@ -12,11 +17,11 @@ const AudioRecorder = () => {
   const startRecording = async () => {
     try {
       if (audioRef.current && !audioRef.current.paused) {
-        audioRef.current.pause(); 
-        audioRef.current.currentTime = 0; 
-        setAudioURL(null); 
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        setAudioURL(null);
       }
-  
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
@@ -43,7 +48,12 @@ const AudioRecorder = () => {
       const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
 
       try {
-        const processedAudioUrl = await sendAudioToApi(audioBlob);
+        const processedAudioUrl = await sendAudioToApi(
+          audioBlob,
+          sttProvider,
+          ttsProvider,
+          queryProvider
+        );
         setAudioURL(processedAudioUrl);
 
         setTimeout(() => {
@@ -60,9 +70,9 @@ const AudioRecorder = () => {
 
   const handleToggleRecording = async () => {
     if (isRecording) {
-      stopRecording(); 
+      stopRecording();
     } else {
-      startRecording(); 
+      startRecording();
     }
   };
 
@@ -70,9 +80,12 @@ const AudioRecorder = () => {
     <div>
       <button
         onClick={handleToggleRecording}
-        className={`px-4 py-2 rounded ${
-          isRecording ? "bg-red-500" : "bg-green-500"
-        } text-white`}
+        className={`px-6 py-3 rounded-full font-semibold transition-colors duration-300
+          ${
+            isRecording
+              ? "bg-gray-500 text-white cursor-not-allowed"
+              : "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+          }`}
       >
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
@@ -88,4 +101,4 @@ const AudioRecorder = () => {
   );
 };
 
-export default AudioRecorder;
+export default RecordButton;

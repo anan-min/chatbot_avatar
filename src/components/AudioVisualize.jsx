@@ -1,8 +1,9 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
+import { Noise } from "noisejs";
 
-// Function to configure Three.js scene, camera, renderer, and cube
+const noise = new Noise(Math.random());
 const configThreeJS = (mountRef) => {
   const scene = new THREE.Scene();
 
@@ -24,7 +25,7 @@ const configThreeJS = (mountRef) => {
   renderer.setClearColor(0x000000, 0); // Fully transparent
   mountRef.current.appendChild(renderer.domElement);
 
-  // Cube setup
+  // ball setup
   const geometry = new THREE.IcosahedronGeometry(20, 1);
   const material = new THREE.ShaderMaterial({
     uniforms: {
@@ -48,27 +49,33 @@ const configThreeJS = (mountRef) => {
     `,
     wireframe: true,
   });
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
+  const ball = new THREE.Mesh(geometry, material);
+  scene.add(ball);
 
-  return { scene, camera, renderer, cube };
+  return { scene, camera, renderer, ball };
 };
-
-// Function to handle the animation loop
-const animate = (cube, scene, camera, renderer) => {
+const animate = (ball, scene, camera, renderer) => {
   const animateFrame = () => {
     requestAnimationFrame(animateFrame);
-
-    // Rotate Cube
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-
+    const pulseFactor = 1 + 0.05 * Math.sin(Date.now() * 0.005);
+    ball.rotation.y += 0.001;
+    ball.scale.set(pulseFactor, pulseFactor, pulseFactor);
     renderer.render(scene, camera);
   };
 
   animateFrame();
 };
+const animate2 = (ball, scene, camera, renderer) => {
+  const animateFrame = () => {
+    requestAnimationFrame(animateFrame);
+    const bassFr = Math.random() * 2; // Random value between 0 and 2
+    const treFr = Math.random() * 2;
+    WarpBall(ball, bassFr, treFr, noise);
+    renderer.render(scene, camera);
+  };
 
+  animateFrame();
+};
 const handleResize = (camera, renderer, mountRef) => {
   const width = mountRef.current.clientWidth;
   const height = mountRef.current.clientHeight;
@@ -76,42 +83,51 @@ const handleResize = (camera, renderer, mountRef) => {
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 };
-
 const WarpBall = (mesh, bassFr, treFr) => {
-  mesh.geometry.vertices.forEach(function (vertex, i) {
-    var offset = mesh.geometry.parameters.radius;
-    var amp = 5;
-    var time = window.performance.now();
+  const geometry = mesh.geometry;
+
+  if (!(geometry instanceof THREE.BufferGeometry)) {
+    console.error("WarpBall expects a BufferGeometry.");
+    return;
+  }
+  const time = performance.now();
+  const noiseTime = time * 0.0005;
+  const positions = geometry.attributes.position;
+  const vertex = new THREE.Vector3();
+  const offset = geometry.parameters.radius || 20;
+  const amp = 3; // Reduced amplitude for smoother warps
+
+  for (let i = 0; i < positions.count; i++) {
+    vertex.fromBufferAttribute(positions, i);
     vertex.normalize();
-    var rf = 0.00001;
-    var distance =
-      offset +
-      bassFr +
-      noise.noise3D(
-        vertex.x + time * rf * 6,
-        vertex.y + time * rf * 7,
-        vertex.z + time * rf * 8
-      ) *
-        amp *
-        treFr;
+
+    // Calculate noise input using controlled noiseTime
+    const noiseInputX = vertex.x + noiseTime * 0.003;
+    const noiseInputY = vertex.y + noiseTime * 0.0035;
+    const noiseInputZ = vertex.z + noiseTime * 0.004;
+
+    const noiseValue = noise.perlin3(noiseInputX, noiseInputY, noiseInputZ);
+
+    const distance = offset + bassFr + noiseValue * amp * treFr;
+
     vertex.multiplyScalar(distance);
-  });
-  mesh.geometry.verticesNeedUpdate = true;
-  mesh.geometry.normalsNeedUpdate = true;
-  mesh.geometry.computeVertexNormals();
-  mesh.geometry.computeFaceNormals();
+    positions.setXYZ(i, vertex.x, vertex.y, vertex.z);
+  }
+
+  positions.needsUpdate = true;
+  geometry.computeVertexNormals();
 };
 
-const ThreeScene = () => {
+const AudioVisualize = ({ processedAudioURL }) => {
   const mountRef = useRef(null);
 
   useEffect(() => {
-    const { scene, camera, renderer, cube } = configThreeJS(mountRef);
+    const { scene, camera, renderer, ball } = configThreeJS(mountRef);
 
     const onResize = () => handleResize(camera, renderer, mountRef);
     window.addEventListener("resize", onResize);
 
-    animate(cube, scene, camera, renderer);
+    animate(ball, scene, camera, renderer);
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -133,4 +149,4 @@ const ThreeScene = () => {
   );
 };
 
-export default ThreeScene;
+export default AudioVisualize;
