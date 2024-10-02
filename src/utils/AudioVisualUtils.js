@@ -78,24 +78,25 @@ export const WarpBall = (mesh, bassFr, treFr, noise) => {
     return;
   }
   const time = performance.now();
-  const noiseTime = time * 0.0005;
+  const noiseTime = time * 0.05;
   const positions = geometry.attributes.position;
   const vertex = new THREE.Vector3();
   const offset = geometry.parameters.radius || 20;
-  const amp = 3; // Reduced amplitude for smoother warps
+  const amp = 20; // Reduced amplitude for smoother warps
 
   for (let i = 0; i < positions.count; i++) {
     vertex.fromBufferAttribute(positions, i);
     vertex.normalize();
 
-    // Calculate noise input using controlled noiseTime
-    const noiseInputX = vertex.x + noiseTime * 0.003;
-    const noiseInputY = vertex.y + noiseTime * 0.0035;
-    const noiseInputZ = vertex.z + noiseTime * 0.004;
+    const noiseInputX = vertex.x + noiseTime * 10;
+    const noiseInputY = vertex.y + noiseTime * 15;
+    const noiseInputZ = vertex.z + noiseTime * 20;
 
     const noiseValue = noise.perlin3(noiseInputX, noiseInputY, noiseInputZ);
 
-    const distance = offset + bassFr + noiseValue * amp * treFr;
+    const randomFactor = Math.random() * 0.8 + 0.2;
+
+    const distance = offset + bassFr + noiseValue * amp * treFr * randomFactor;
 
     vertex.multiplyScalar(distance);
     positions.setXYZ(i, vertex.x, vertex.y, vertex.z);
@@ -132,10 +133,10 @@ export const AudioAnimate = (
     const upperMax = Math.max(...upperHalfArray);
 
     // Modulate ball properties based on audio data
-    WarpBall(ball, lowerMax / 128, upperMax / 128, noise); // Example modulation
+    WarpBall(ball, lowerMax / 64, upperMax / 128, noise); // Example modulation
 
     // Rotate the ball
-    ball.rotation.y += 0.01;
+    ball.rotation.y += 0.001;
 
     // Render the scene
     renderer.render(scene, camera);

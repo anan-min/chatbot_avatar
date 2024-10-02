@@ -9,19 +9,11 @@ const RecordButton = ({
   setProcessedAudioURL,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
-  const [audioURL, setAudioURL] = useState(null); // State to store the audio URL
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
-  const audioRef = useRef(null);
 
   const startRecording = async () => {
     try {
-      if (audioRef.current && !audioRef.current.paused) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-        setAudioURL(null);
-      }
-
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
@@ -54,17 +46,11 @@ const RecordButton = ({
           ttsProvider,
           queryProvider
         );
-        setAudioURL(processedAudioUrl);
         setProcessedAudioURL(processedAudioUrl);
-
-        setTimeout(() => {
-          if (audioRef.current) {
-            audioRef.current.play();
-          }
-        }, 500);
       } catch (error) {
         console.error("Error handling audio:", error);
       }
+
       audioChunksRef.current = [];
     };
   };
@@ -78,11 +64,6 @@ const RecordButton = ({
   };
 
   const handleReset = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0; // Reset audio to the beginning
-    }
-    setAudioURL(null);
     setIsRecording(false);
     audioChunksRef.current = []; // Clear recorded audio chunks
   };
@@ -100,14 +81,6 @@ const RecordButton = ({
       >
         {isRecording ? "End" : "Start"}
       </button>
-
-      {audioURL && (
-        <audio
-          ref={audioRef}
-          src={audioURL}
-          style={{ display: "none" }} // Hides the audio player
-        ></audio>
-      )}
 
       <button
         onClick={handleReset}
