@@ -13,7 +13,7 @@ const configThreeJS = (mountRef) => {
     0.1,
     1000
   );
-  camera.position.z = 2;
+  camera.position.z = 40;
 
   // Renderer setup
   const renderer = new THREE.WebGLRenderer({
@@ -25,10 +25,28 @@ const configThreeJS = (mountRef) => {
   mountRef.current.appendChild(renderer.domElement);
 
   // Cube setup
-  const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshNormalMaterial({
-    transparent: true,
-    opacity: 0.8,
+  const geometry = new THREE.IcosahedronGeometry(20, 1);
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      color1: { value: new THREE.Color("#fff1eb") },
+      color2: { value: new THREE.Color("#3d3d3d") },
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 color1;
+      uniform vec3 color2;
+      varying vec2 vUv;
+      void main() {
+        gl_FragColor = vec4(mix(color1, color2, vUv.y), 1.0);
+      }
+    `,
+    wireframe: true,
   });
   const cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
@@ -51,7 +69,7 @@ const animate = (cube, scene, camera, renderer) => {
   animateFrame();
 };
 
-const handleResize = (camera, renderer) => {
+const handleResize = (camera, renderer, mountRef) => {
   const width = mountRef.current.clientWidth;
   const height = mountRef.current.clientHeight;
   renderer.setSize(width, height);
@@ -65,7 +83,7 @@ const ThreeScene = () => {
   useEffect(() => {
     const { scene, camera, renderer, cube } = configThreeJS(mountRef);
 
-    const onResize = () => handleResize(camera, renderer);
+    const onResize = () => handleResize(camera, renderer, mountRef);
     window.addEventListener("resize", onResize);
 
     animate(cube, scene, camera, renderer);
@@ -84,7 +102,7 @@ const ThreeScene = () => {
       style={{
         width: "100%",
         height: "100%",
-        pointerEvents: "none", 
+        pointerEvents: "none",
       }}
     />
   );
