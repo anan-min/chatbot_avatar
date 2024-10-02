@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import AudioVisualize from "@/components/AudioVisualize";
+import AudioVisualize from "@/components/home/AudioVisualize";
 
 const MainCard = () => {
   const [sttProvider, setSttProvider] = useState("openai_stt");

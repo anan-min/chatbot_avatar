@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { Noise } from "noisejs";
 
 export const configThreeJS = (mountRef) => {
   const scene = new THREE.Scene();
@@ -62,17 +61,7 @@ export const staticAnimate = (ball, scene, camera, renderer) => {
 
   animateFrame();
 };
-export const AudioAnimate = (ball, scene, camera, renderer, noise) => {
-  const animateFrame = () => {
-    requestAnimationFrame(animateFrame);
-    const bassFr = Math.random() * 2; // Random value between 0 and 2
-    const treFr = Math.random() * 2;
-    WarpBall(ball, bassFr, treFr, noise);
-    renderer.render(scene, camera);
-  };
 
-  animateFrame();
-};
 export const handleResize = (camera, renderer, mountRef) => {
   const width = mountRef.current.clientWidth;
   const height = mountRef.current.clientHeight;
@@ -82,6 +71,7 @@ export const handleResize = (camera, renderer, mountRef) => {
 };
 export const WarpBall = (mesh, bassFr, treFr, noise) => {
   const geometry = mesh.geometry;
+  console.log(noise);
 
   if (!(geometry instanceof THREE.BufferGeometry)) {
     console.error("WarpBall expects a BufferGeometry.");
@@ -113,4 +103,42 @@ export const WarpBall = (mesh, bassFr, treFr, noise) => {
 
   positions.needsUpdate = true;
   geometry.computeVertexNormals();
+};
+
+export const AudioAnimate = (
+  ball,
+  scene,
+  camera,
+  renderer,
+  noise,
+  analyser,
+  dataArray,
+  animationIdRef
+) => {
+  const animateFrame = () => {
+    const animationId = requestAnimationFrame(animateFrame);
+
+    // Store the animation ID to cancel it later
+    animationIdRef.current = animationId;
+
+    // Get audio data
+    analyser.getByteFrequencyData(dataArray);
+
+    // Calculate some metrics (adjust for your needs)
+    const lowerHalfArray = dataArray.slice(0, dataArray.length / 2);
+    const upperHalfArray = dataArray.slice(dataArray.length / 2);
+
+    const lowerMax = Math.max(...lowerHalfArray);
+    const upperMax = Math.max(...upperHalfArray);
+
+    // Modulate ball properties based on audio data
+    WarpBall(ball, lowerMax / 128, upperMax / 128, noise); // Example modulation
+
+    // Rotate the ball
+    ball.rotation.y += 0.01;
+
+    // Render the scene
+    renderer.render(scene, camera);
+  };
+  animateFrame();
 };
