@@ -14,6 +14,7 @@ const RecordButton = ({
   const audioChunksRef = useRef([]);
   const audioRef = useRef(null);
 
+
   const startRecording = async () => {
     try {
       if (audioRef.current && !audioRef.current.paused) {
@@ -55,6 +56,7 @@ const RecordButton = ({
           queryProvider
         );
         setAudioURL(processedAudioUrl);
+        setProcessedAudioURL(processedAudioUrl);
 
         setTimeout(() => {
           if (audioRef.current) {
