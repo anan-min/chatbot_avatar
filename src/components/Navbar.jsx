@@ -8,7 +8,7 @@ const Navbar = () => {
       <div className="flex h-14 items-center p-4">
         <Link
           href="#"
-          className="mr-auto flex items-center gap-2 text-lg font-semibold"
+          className="mr-auto flex items-center gap-2 text-xl font-bold"
           prefetch={false}
         >
           <span className="text-teal-600">SCG</span>

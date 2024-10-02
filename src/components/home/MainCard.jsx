@@ -32,7 +32,7 @@ const MainCard = () => {
       <CardHeader>
         <CardTitle>
           Chat with
-          <span className="text-teal-600"> SCG</span>
+          <span className="text-teal-600 font-bold"> SCG</span>
         </CardTitle>
         <CardDescription className="mb-4">
           Choose providers and hit record.
