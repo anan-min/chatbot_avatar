@@ -63,9 +63,10 @@ const RecordButton = ({
     }
   };
 
-  const handleReset = () => {
+  const handleStop = () => {
     setIsRecording(false);
     audioChunksRef.current = []; // Clear recorded audio chunks
+    setProcessedAudioURL(null);
   };
 
   return (
@@ -83,11 +84,11 @@ const RecordButton = ({
       </button>
 
       <button
-        onClick={handleReset}
+        onClick={handleStop}
         className="ml-4 px-6 py-3 rounded-full bg-teal-500 text-white font-semibold hover:bg-teal-700 dark:bg-teal-500 dark:text-black dark:hover:bg-teal-400"
         disabled={isRecording} // Disable reset while recording
       >
-        Reset
+        Stop
       </button>
     </div>
   );

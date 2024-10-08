@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Noise } from "noisejs";
 import {
   configThreeJS,
@@ -25,8 +25,7 @@ const AudioVisualize = ({ processedAudioURL }) => {
     animationIdRef
   ) => {
     // Create AudioContext and load the audio
-    const audioContext = new (window.AudioContext ||
-      window.webkitAudioContext)();
+    const audioContext = new (window.AudioContext || window.AudioContext)();
     audioContextRef.current = audioContext; // Store it in a ref to interact later
 
     const audioElement = new Audio(processedAudioURL);
@@ -44,6 +43,10 @@ const AudioVisualize = ({ processedAudioURL }) => {
     // Start the audio and begin animation
     audioElement.play();
 
+    audioElement.addEventListener("ended", () => {
+      staticAnimate(ball, scene, camera, renderer, noise);
+    });
+
     // Start the animation loop
     AudioAnimate(
       ball,
@@ -57,7 +60,6 @@ const AudioVisualize = ({ processedAudioURL }) => {
     );
     // Return the necessary references for further control
     return {
-      audioContext,
       audioElement,
       analyser,
       dataArray,
@@ -73,7 +75,7 @@ const AudioVisualize = ({ processedAudioURL }) => {
       staticAnimate(ball, scene, camera, renderer, noise);
     } else {
       console.log(noise);
-      const { audioContext, audioElement } = setupAudioVisualizer(
+      const { audioElement } = setupAudioVisualizer(
         processedAudioURL,
         ball,
         scene,
