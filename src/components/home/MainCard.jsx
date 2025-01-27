@@ -19,7 +19,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import AudioVisualize from "@/components/home/AudioVisualize";
+// import AudioVisualize from "@/components/home/AudioVisualize";
+import { Canva } from "@/components/home/Canva";
 
 const MainCard = () => {
   const [sttProvider, setSttProvider] = useState("openai_stt");
@@ -39,8 +40,9 @@ const MainCard = () => {
         </CardDescription>
       </CardHeader>
       <div className="w-full h-full flex justify-center items-center">
-        <Card className="w-2/3 aspect-square ">
-          <AudioVisualize processedAudioURL={processedAudioURL} />
+        <Card className="w-2/3 aspect-square overflow-hidden">
+          {/* <AudioVisualize processedAudioURL={processedAudioURL} /> */}
+          <Canva />
         </Card>
       </div>
       <CardContent className="mt-4">
