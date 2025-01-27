@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div>
       <Navbar />
-      <main className="pt-14">
+      <main className="pt-16">
         <div className="p-6 flex justify-center">
           <Maincard />
         </div>
