@@ -14,13 +14,22 @@ export function Avatar(props) {
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
 
+  // animation controls
   const { animations: standingAnimation } = useFBX("/animations/standing.fbx");
+  const { animations: laughingAnimation } = useFBX("/animations/laughing.fbx");
+  const { animations: runningAnimation } = useFBX("/animations/running.fbx");
+
   standingAnimation[0].name = "standing";
-  const [animation, setAnimation] = useState("standing");
+  laughingAnimation[0].name = "laughing";
+  runningAnimation[0].name = "running";
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [animation, setAnimation] = useState("running");
   const group = useRef();
-  const { actions } = useAnimations([standingAnimation[0]], group);
-
+  const { actions } = useAnimations(
+    [standingAnimation[0], laughingAnimation[0], runningAnimation[0]],
+    group
+  );
   useEffect(() => {
     actions[animation].reset().fadeIn(0.5).play();
 
