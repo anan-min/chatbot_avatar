@@ -4,16 +4,33 @@ Command: npx gltfjsx@6.5.3 public/models/avatar.glb -o components/avatar/Avatar.
 */
 
 import React from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGraph } from "@react-three/fiber";
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, useFBX, useAnimations } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 
 export function Avatar(props) {
   const { scene } = useGLTF("/models/avatar.glb");
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
+
+  const { animations: standingAnimation } = useFBX("/animations/standing.fbx");
+  standingAnimation[0].name = "standing";
+  const [animation, setAnimation] = useState("standing");
+
+  const group = useRef();
+  const { actions } = useAnimations([standingAnimation[0]], group);
+
+  useEffect(() => {
+    actions[animation].reset().fadeIn(0.5).play();
+
+    return () => {
+      actions[animation].fadeOut(0.5);
+    };
+  }, [animation, actions]);
+
   return (
-    <group {...props} dispose={null}>
+    <group {...props} dispose={null} ref={group}>
       <primitive object={nodes.Hips} />
       <skinnedMesh
         geometry={nodes.Wolf3D_Hair.geometry}
