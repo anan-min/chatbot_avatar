@@ -19,14 +19,12 @@ export const sendAudioToApi = async (
     });
 
     const responseData = await response.json();
-    console.log("Response received:", responseData);
-
     const { text, audio_base64, mime_type } = responseData;
-    console.log(text, audio_base64, mime_type);
-
     const audioUrl = `data:${mime_type};base64,${audio_base64}`;
-    const audio = new Audio(audioUrl);
-    audio.play();
+
+    // const audio = new Audio(audioUrl);
+    // audio.play();
+    console.log("text at apihandler", text);
 
     return { text, audioUrl };
   } catch (error) {

@@ -1,12 +1,13 @@
 "use client";
 import { useState, useRef } from "react";
-import { sendAudioToApi } from "./apiHandler"; // Assuming your API function is in apiHandler.js
+import { sendAudioToApi } from "./apiHandler";
 
 const RecordButton = ({
   sttProvider,
   ttsProvider,
   queryProvider,
   setProcessedAudioURL,
+  setTextResponse,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
@@ -46,7 +47,9 @@ const RecordButton = ({
           ttsProvider,
           queryProvider
         );
+        console.log("text response at recordbutton", text);
         setProcessedAudioURL(processedAudioUrl);
+        setTextResponse(text);
       } catch (error) {
         console.error("Error handling audio:", error);
       }

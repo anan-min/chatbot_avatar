@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RecordButton from "@/components/home/RecordButton";
 import {
   Card,
@@ -27,6 +27,14 @@ const MainCard = () => {
   const [ttsProvider, setTtsProvider] = useState("openai_tts");
   const [queryProvider, setQueryProvider] = useState("chatgpt");
   const [processedAudioURL, setProcessedAudioURL] = useState(null);
+  const [textResponse, setTextResponse] = useState(null);
+
+  useEffect(() => {
+    console.log("sttProvider", sttProvider);
+    console.log("ttsProvider", ttsProvider);
+    console.log("queryProvider", queryProvider);
+    console.log("textResponse", textResponse);
+  }, [sttProvider, ttsProvider, queryProvider, textResponse]);
 
   return (
     <Card className="w-2/3 h-2/3 max-w-[700px] dark:dark-shadow">
@@ -42,7 +50,10 @@ const MainCard = () => {
       <div className="w-full h-full flex justify-center items-center">
         <Card className="w-2/3 aspect-square overflow-hidden">
           {/* <AudioVisualize processedAudioURL={processedAudioURL} /> */}
-          <Canva />
+          <Canva
+            processedAudioURL={processedAudioURL}
+            textResponse={textResponse}
+          />
         </Card>
       </div>
       <CardContent className="mt-4">
@@ -58,11 +69,11 @@ const MainCard = () => {
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent position="popper">
-                  <SelectItem value="openai_stt">OpenAI Whisper</SelectItem>
-                  <SelectItem value="aws_stt">AWS Transcribe</SelectItem>
                   <SelectItem value="google_stt">
                     Google Speech-to-Text
                   </SelectItem>
+                  <SelectItem value="openai_stt">OpenAI Whisper</SelectItem>
+                  <SelectItem value="aws_stt">AWS Transcribe</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -76,11 +87,11 @@ const MainCard = () => {
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent position="popper">
-                  <SelectItem value="openai_tts">OpenAI TTS</SelectItem>
-                  <SelectItem value="aws_tts">AWS Polly</SelectItem>
                   <SelectItem value="google_tts">
                     Google Text-to-Speech
                   </SelectItem>
+                  <SelectItem value="openai_tts">OpenAI TTS</SelectItem>
+                  <SelectItem value="aws_tts">AWS Polly</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -109,8 +120,8 @@ const MainCard = () => {
           sttProvider={sttProvider}
           ttsProvider={ttsProvider}
           queryProvider={queryProvider}
-          processedAudioURL={processedAudioURL}
           setProcessedAudioURL={setProcessedAudioURL}
+          setTextResponse={setTextResponse}
         />
       </CardFooter>
     </Card>
