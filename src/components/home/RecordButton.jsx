@@ -40,7 +40,7 @@ const RecordButton = ({
       const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
 
       try {
-        const processedAudioUrl = await sendAudioToApi(
+        const { text, audioUrl: processedAudioUrl } = await sendAudioToApi(
           audioBlob,
           sttProvider,
           ttsProvider,

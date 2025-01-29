@@ -18,13 +18,17 @@ export const sendAudioToApi = async (
       body: formData,
     });
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
-    }
+    const responseData = await response.json();
+    console.log("Response received:", responseData);
 
-    console.log("response recieved", response);
-    const audioBlobFromApi = await response.blob();
-    return URL.createObjectURL(audioBlobFromApi); // Return the audio URL
+    const { text, audio_base64, mime_type } = responseData;
+    console.log(text, audio_base64, mime_type);
+
+    const audioUrl = `data:${mime_type};base64,${audio_base64}`;
+    const audio = new Audio(audioUrl);
+    audio.play();
+
+    return { text, audioUrl };
   } catch (error) {
     console.error("Error sending audio to API:", error);
     throw error;
