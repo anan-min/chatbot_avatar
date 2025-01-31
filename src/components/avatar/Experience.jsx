@@ -1,6 +1,7 @@
 import { Environment, useTexture } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { Avatar } from "@/components/avatar/Avatar";
+// import { Avatar2 } from "@/components/avatar/Avatar2";
 import { useEffect } from "react";
 
 export const Experience = ({ processedAudioURL, textResponse }) => {

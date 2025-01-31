@@ -36,10 +36,10 @@ export function Avatar(props) {
         0,
         dataArrayRef.current.length / 3
       );
-      const midFreq = dataArrayRef.current.slice(
-        dataArrayRef.current.length / 3,
-        (2 * dataArrayRef.current.length) / 3
-      );
+      // const midFreq = dataArrayRef.current.slice(
+      //   dataArrayRef.current.length / 3,
+      //   (2 * dataArrayRef.current.length) / 3
+      // );
       const highFreq = dataArrayRef.current.slice(
         (2 * dataArrayRef.current.length) / 3
       );
@@ -47,26 +47,30 @@ export function Avatar(props) {
       // Calculate average volume for each band
       const lowVolume =
         lowFreq.reduce((sum, value) => sum + value, 0) / lowFreq.length;
-      const midVolume =
-        midFreq.reduce((sum, value) => sum + value, 0) / midFreq.length;
+      // const midVolume =
+      //   midFreq.reduce((sum, value) => sum + value, 0) / midFreq.length;
       const highVolume =
         highFreq.reduce((sum, value) => sum + value, 0) / highFreq.length;
 
       // Normalize volumes (0 to 1)
       const normalizedLow = Math.min(lowVolume / 128, 1);
-      const normalizedMid = Math.min(midVolume / 128, 1);
+      // const normalizedMid = Math.min(midVolume / 128, 1);
       const normalizedHigh = Math.min(highVolume / 128, 1);
 
       // Update morph targets
       nodes.Wolf3D_Head.morphTargetInfluences[
         nodes.Wolf3D_Head.morphTargetDictionary["mouthOpen"]
-      ] = normalizedLow; // Jaw movement
+      ] = normalizedLow * 1.2; // Jaw movement
+      nodes.Wolf3D_Teeth.morphTargetInfluences[
+        nodes.Wolf3D_Teeth.morphTargetDictionary["mouthOpen"]
+      ] = normalizedLow * 0.25; // Jaw movement
+
       nodes.Wolf3D_Head.morphTargetInfluences[
-        nodes.Wolf3D_Head.morphTargetDictionary["mouthWide"]
-      ] = normalizedMid; // Lips spreading
-      nodes.Wolf3D_Head.morphTargetInfluences[
-        nodes.Wolf3D_Head.morphTargetDictionary["mouthNarrow"]
-      ] = normalizedHigh; // Lips puckering
+        nodes.Wolf3D_Head.morphTargetDictionary["mouthSmile"]
+      ] = normalizedHigh; // Jaw movement
+      nodes.Wolf3D_Teeth.morphTargetInfluences[
+        nodes.Wolf3D_Teeth.morphTargetDictionary["mouthSmile"]
+      ] = normalizedHigh; // Jaw movement
 
       // Continue updating on the next frame
       animationFrameRef.current = requestAnimationFrame(updateMouthMorph);
@@ -74,6 +78,8 @@ export function Avatar(props) {
   }, [
     nodes.Wolf3D_Head.morphTargetDictionary,
     nodes.Wolf3D_Head.morphTargetInfluences,
+    nodes.Wolf3D_Teeth.morphTargetDictionary,
+    nodes.Wolf3D_Teeth.morphTargetInfluences,
   ]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -86,16 +92,24 @@ export function Avatar(props) {
 
   // standby animations
   useEffect(() => {
-    actions[animation].reset().fadeIn(0.5).play();
+    if (processedAudioURL) {
+      setAnimation("standing");
+      actions[animation]?.reset().fadeIn(0.5).play();
+    } else {
+      setAnimation("standing"); // Ensure it's always standing when no audio
+      actions[animation]?.reset().fadeIn(0.5).play();
+    }
     return () => {
       actions[animation]?.fadeOut(0.5);
     };
-  }, [animation, actions]);
+  }, [animation, processedAudioURL, actions]);
 
   useEffect(() => {
     if (processedAudioURL) {
       console.log("Avatar Text Response:", textResponse);
       console.log("Avatar Audio URL:", processedAudioURL);
+      console.log("head dict", nodes.Wolf3D_Head.morphTargetDictionary);
+      console.log("teeth dict", nodes.Wolf3D_Teeth.morphTargetDictionary);
 
       // Clean up any existing audio and audio context
       if (audioRef.current) {
