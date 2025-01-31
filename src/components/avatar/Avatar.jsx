@@ -88,7 +88,7 @@ export function Avatar(props) {
   useEffect(() => {
     actions[animation].reset().fadeIn(0.5).play();
     return () => {
-      // actions[animation].fadeOut(0.5);
+      actions[animation]?.fadeOut(0.5);
     };
   }, [animation, actions]);
 
@@ -128,6 +128,7 @@ export function Avatar(props) {
       // Start the animation loop for updating the mouth morph
       updateMouthMorph();
     } else {
+      setAnimation("standing");
       // Stop the audio and cleanup if processedAudioURL is null
       if (audioRef.current) {
         audioRef.current.pause();
